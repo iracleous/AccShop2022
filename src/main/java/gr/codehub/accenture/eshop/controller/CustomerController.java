@@ -1,18 +1,15 @@
 package gr.codehub.accenture.eshop.controller;
 
 import gr.codehub.accenture.eshop.model.Customer;
-import gr.codehub.accenture.eshop.repository.CustomerRepository;
 import gr.codehub.accenture.eshop.service.EshopService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
-public class EshopController {
+public class CustomerController {
     private EshopService eshopService;
 
     @GetMapping(value="" )

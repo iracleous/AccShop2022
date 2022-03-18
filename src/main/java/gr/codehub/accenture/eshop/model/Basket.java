@@ -1,5 +1,6 @@
 package gr.codehub.accenture.eshop.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ public class Basket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private LocalDateTime date;
+    @JsonIgnore
     @ManyToOne
     private Customer customer;
     @OneToMany(mappedBy = "basket")

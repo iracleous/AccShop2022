@@ -1,5 +1,6 @@
 package gr.codehub.accenture.eshop.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ public class Customer {
     private int age;
     private LocalDateTime registrationDate;
     private CustomerType customerType;
+
     @OneToMany(mappedBy = "customer")
     private List<Basket> baskets;
 
