@@ -163,6 +163,64 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Add product to Basket",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:1005/basket/1/product/1",
+					"host": [
+						"localhost"
+					],
+					"port": "1005",
+					"path": [
+						"basket",
+						"1",
+						"product",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Products From Basket",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:1005/basket/1",
+					"host": [
+						"localhost"
+					],
+					"port": "1005",
+					"path": [
+						"basket",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all product",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:1005/product",
+					"host": [
+						"localhost"
+					],
+					"port": "1005",
+					"path": [
+						"product"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

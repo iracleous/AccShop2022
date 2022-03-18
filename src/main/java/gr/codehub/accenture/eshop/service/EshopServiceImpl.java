@@ -66,8 +66,15 @@ public class EshopServiceImpl implements EshopService{
     }
 
     @Override
-    public List<Product> readProduct() {
-        return null;
+    public List<ProductDto> readProduct() {
+         return productRepository
+                 .findAll()
+                 .stream()
+                 .map(product -> new ProductDto(
+                         product.getId(),
+                         product.getName(),
+                        product.getPrice(),0))
+                 .toList();
     }
 
     @Override
@@ -105,10 +112,19 @@ public class EshopServiceImpl implements EshopService{
         Optional<Product> productOpt = productRepository.findById(productId);
         if (basketOpt.isEmpty()  || productOpt.isEmpty())
             return false;
-        BasketProduct basketProduct = new BasketProduct();
-        basketProduct.setBasket(basketOpt.get());
-        basketProduct.setProduct(productOpt.get());
-        basketProductRepository.save(basketProduct);
+
+      Optional<BasketProduct> basketProductOpt
+              = basketProductRepository.findByBasketAndProduct(basketId,  productId);
+
+      if (basketProductOpt.isEmpty()) {
+          BasketProduct basketProduct = new BasketProduct();
+          basketProduct.setBasket(basketOpt.get());
+          basketProduct.setProduct(productOpt.get());
+          basketProductRepository.save(basketProduct);
+          return true;
+      }
+        basketProductOpt.get().setQuantity(   basketProductOpt.get().getQuantity()+1  );
+        basketProductRepository.save(basketProductOpt.get());
 
         return true;
     }
@@ -119,12 +135,18 @@ public class EshopServiceImpl implements EshopService{
         if (basketOpt.isEmpty()   )
             return null;
         //todo
-        List<ProductDto> productDtoList = new ArrayList<>();
 
-
-
-        return null;
-    }
+    //    List<Product> products = productRepository.findAllProduct(basketId);
+        List<Product> products = basketRepository.getProductsFromBasket(basketId);
+        return  products
+                .stream()
+                .map(product -> new ProductDto(
+                        product.getId(),
+                        product.getName(),
+                        product.getPrice(),0)
+                )
+                .toList();
+     }
 
 
 

@@ -14,7 +14,7 @@ public interface EshopService {
     boolean deleteCustomer(int customerId);
 
     Product createProduct(Product product);
-    List<Product> readProduct();
+    List<ProductDto> readProduct();
     Product readProduct(int productId);
     Product updateProduct(int productId, Product product);
     boolean deleteProduct(int productId);
