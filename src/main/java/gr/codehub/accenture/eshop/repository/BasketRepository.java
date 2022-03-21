@@ -12,6 +12,11 @@ import java.util.List;
 @Repository
 public interface BasketRepository extends JpaRepository<Basket, Integer> {
 
+
     @Query( value ="Select bp.product from BasketProduct bp where bp.basket.id = :basketId")
     List<Product> getProductsFromBasket(int basketId);
+
+    @Query( value ="Select b from Basket b where b.customer.id = :customerId")
+    List<Basket> findBasketsByCustomerId(int customerId);
+
 }

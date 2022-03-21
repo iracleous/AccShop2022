@@ -1,6 +1,8 @@
 package gr.codehub.accenture.eshop.controller;
 
+import gr.codehub.accenture.eshop.dto.BasketDto;
 import gr.codehub.accenture.eshop.dto.ProductDto;
+import gr.codehub.accenture.eshop.dto.ResponseResult;
 import gr.codehub.accenture.eshop.model.Basket;
 import gr.codehub.accenture.eshop.model.Customer;
 import gr.codehub.accenture.eshop.model.Product;
@@ -23,7 +25,7 @@ public class ProductController {
 
 
     @PostMapping(value="/basket/customer/{customerId}" )
-    public int createBasket (@PathVariable("customerId") int customerId){
+    public ResponseResult<Integer> createBasket (@PathVariable("customerId") int customerId){
         return eshopService.createBasket(customerId);
     }
 
@@ -32,13 +34,24 @@ public class ProductController {
         return eshopService.addToBasket(basketId, productId);
     }
 
+    @GetMapping(value="/product" )
+    public List<ProductDto>  getAllProducts(@RequestParam(required = false) String pageCount, @RequestParam(required = false) String pageSize  ){
+        return  eshopService.readProduct( pageCount,  pageSize );
+    }
+
     @GetMapping(value="/basket/{basketId}")
     public List<ProductDto> productsInBasket(@PathVariable("basketId") int basketId){
         return eshopService.productsInBasket(basketId);
     }
 
-    @GetMapping(value="/product" )
-    public List<ProductDto>  getAllProducts(){
-        return  eshopService.readProduct();
+    @GetMapping(value="/basket1/{basketId}")
+    public List<ProductDto> productsInBasket1(@PathVariable("basketId") int basketId){
+        return eshopService.productsInBasket1(basketId);
+     }
+
+    @GetMapping(value="/customer/{customerId}/basket")
+    public ResponseResult<List<BasketDto>> customerBasketProducts(@PathVariable("customerId") int customerId){
+        return eshopService.customerBasketProducts(customerId);
     }
+
 }

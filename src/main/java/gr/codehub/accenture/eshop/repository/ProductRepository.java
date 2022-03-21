@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
-   // @Query(value = "Select p from Product p inner join BasketProduct bp inner join Basket b where b = :basketId")
-  //  List<Product> findAllProduct(int basketId);
+    @Query(value = "Select p from Product p  join  p.basketProductList bp   where bp.basket.id = :basketId")
+    List<Product> findAllProduct(int basketId);
 
 }

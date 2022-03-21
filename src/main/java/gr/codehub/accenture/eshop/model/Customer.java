@@ -19,6 +19,8 @@ public class Customer {
     private LocalDateTime registrationDate;
     private CustomerType customerType;
 
+
+    @JsonIgnore
     @OneToMany(mappedBy = "customer")
     private List<Basket> baskets;
 

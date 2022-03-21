@@ -1,5 +1,6 @@
 package gr.codehub.accenture.eshop.controller;
 
+import gr.codehub.accenture.eshop.dto.ResponseResult;
 import gr.codehub.accenture.eshop.model.Customer;
 import gr.codehub.accenture.eshop.service.EshopService;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ public class CustomerController {
     }
 
     @GetMapping(value="/customer" )
-    public List<Customer> get (){
+    public ResponseResult<List<Customer>> get (){
          return eshopService.readCustomer();
     }
     @GetMapping(value="/customer/{customerId}" )
@@ -39,7 +40,7 @@ public class CustomerController {
     }
 
     @DeleteMapping(value="/customer/{customerId}" )
-    public boolean delete (@PathVariable("customerId") int customerId){
+    public ResponseResult<Boolean> delete (@PathVariable("customerId") int customerId){
       return eshopService.deleteCustomer(customerId);
     }
 

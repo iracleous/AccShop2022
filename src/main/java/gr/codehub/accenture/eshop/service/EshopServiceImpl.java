@@ -1,30 +1,36 @@
 package gr.codehub.accenture.eshop.service;
 
-import gr.codehub.accenture.eshop.dto.ProductDto;
+import gr.codehub.accenture.eshop.dto.*;
 import gr.codehub.accenture.eshop.model.Basket;
 import gr.codehub.accenture.eshop.model.BasketProduct;
 import gr.codehub.accenture.eshop.model.Customer;
 import gr.codehub.accenture.eshop.model.Product;
-import gr.codehub.accenture.eshop.repository.BasketProductRepository;
-import gr.codehub.accenture.eshop.repository.BasketRepository;
-import gr.codehub.accenture.eshop.repository.CustomerRepository;
-import gr.codehub.accenture.eshop.repository.ProductRepository;
+import gr.codehub.accenture.eshop.repository.*;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
+/**
+ * This class implements the services
+ */
 @Service
 @AllArgsConstructor
+@Slf4j
 public class EshopServiceImpl implements EshopService{
     private CustomerRepository customerRepository;
     private ProductRepository productRepository;
     private BasketRepository basketRepository;
     private BasketProductRepository basketProductRepository;
+
+    private ProductRepositoryPageable productPaging;
 
     @Override
     public Customer createCustomer(Customer customer) {
@@ -33,8 +39,12 @@ public class EshopServiceImpl implements EshopService{
     }
 
     @Override
-    public List<Customer> readCustomer() {
-        return customerRepository.findAll();
+    public ResponseResult<List<Customer>> readCustomer() {
+        List<Customer> list = customerRepository.findAll();
+        if (list.size()==0)
+            return new ResponseResult(list, ResponseStatus.CUSTOMER_NOT_FOUND, "No customers");
+
+        return new ResponseResult(list, ResponseStatus.SUCCESS, "Success");
     }
 
     @Override
@@ -52,12 +62,17 @@ public class EshopServiceImpl implements EshopService{
     }
 
     @Override
-    public boolean deleteCustomer(int customerId) {
+    public ResponseResult<Boolean> deleteCustomer(int customerId) {
         Optional<Customer> customerDb = customerRepository.findById(customerId);
         if (customerDb.isEmpty())
-            return false;
-        customerRepository.delete(customerDb.get());
-        return true;
+            return new ResponseResult<Boolean>(false, ResponseStatus.CUSTOMER_NOT_FOUND,"No such customer");
+        try {
+            customerRepository.delete(customerDb.get());
+            return new ResponseResult<Boolean>(true, ResponseStatus.SUCCESS,"The customer has been deleted");
+        }
+       catch(Exception e){
+           return new ResponseResult<Boolean>(false, ResponseStatus.CUSTOMER_CANNOT_BE_DELETED,"The customer cannot be deleted");
+       }
     }
 
     @Override
@@ -78,6 +93,30 @@ public class EshopServiceImpl implements EshopService{
     }
 
     @Override
+    public List<ProductDto> readProduct( String pageCount, String pageSize) {
+
+        int pCount; int pSize;
+        try {
+     pCount = Integer.parseInt(pageCount);
+     pSize = Integer.parseInt(pageSize);
+}
+        catch(Exception e){
+            pCount = 1;
+            pSize =20;
+        }
+
+        Pageable firstPageWithTwoElements = PageRequest.of(pCount-1, pSize);
+
+         return   productPaging.findAll(firstPageWithTwoElements).stream()
+                 .map(product -> new ProductDto(
+                         product.getId(),
+                         product.getName(),
+                         product.getPrice(),0)
+                 )
+                 .toList();
+    }
+
+    @Override
     public Product readProduct(int productId) {
         return null;
     }
@@ -92,17 +131,36 @@ public class EshopServiceImpl implements EshopService{
         return false;
     }
 
+    /**
+     * This method creates a basket for the given customer
+     * @param customerId
+     * @return the basket id in the db embedded in a ResponseResult
+     */
     @Override
-    public int createBasket(int customerId) {
+    public ResponseResult<Integer> createBasket(int customerId) {
+        log.debug("Create basket method entering method",customerId);
         Optional<Customer> customerOpt = customerRepository.findById(customerId);
 
-        if (customerOpt.isEmpty()) return -1;
+        if (customerOpt.isEmpty()) {
+
+            log.debug("Create basket method returning from method",  ResponseStatus.CUSTOMER_NOT_FOUND);
+            return new ResponseResult<>(-1,
+                    ResponseStatus.CUSTOMER_NOT_FOUND, "The customer cannot be found");
+        }
         Basket basket  = new Basket();
         basket.setDate( LocalDateTime.now());
         basket.setCustomer(customerOpt.get());
+        try {
+            basketRepository.save(basket);
+        }
+        catch (Exception e){
+            log.debug("Create basket method returning from method",  ResponseStatus.BASKET_NOT_CREATED);
+            return new ResponseResult<>(-1, ResponseStatus.BASKET_NOT_CREATED, "The basket has NOT been saved");
+        }
 
-        basketRepository.save(basket);
-        return basket.getId();
+        log.debug("Create basket method returning from method",  ResponseStatus.SUCCESS);
+        return new ResponseResult<>( basket.getId(),
+                ResponseStatus.SUCCESS,"The basket has been created successfully")  ;
     }
 
     @Override
@@ -148,8 +206,43 @@ public class EshopServiceImpl implements EshopService{
                 .toList();
      }
 
+    @Override
+    public List<ProductDto> productsInBasket1(int basketId) {
+        Optional<Basket> basketOpt = basketRepository.findById(basketId);
+        if (basketOpt.isEmpty()   )
+            return null;
+        //todo
 
+           List<Product> products = productRepository.findAllProduct(basketId);
 
+        return  products
+                .stream()
+                .map(product -> new ProductDto(
+                        product.getId(),
+                        product.getName(),
+                        product.getPrice(),0)
+                )
+                .toList();
+    }
+
+    @Override
+    public ResponseResult<List<BasketDto>> customerBasketProducts(int customerId) {
+        Optional<Customer> customerOpt = customerRepository.findById(customerId);
+
+        if (customerOpt.isEmpty()) {
+
+            log.debug("Create basket method returning from method",  ResponseStatus.CUSTOMER_NOT_FOUND);
+            return new ResponseResult<>(null,
+                    ResponseStatus.CUSTOMER_NOT_FOUND, "The customer cannot be found");
+        }
+        List<Basket> basketList = basketRepository.findBasketsByCustomerId(customerId);
+        List<BasketDto> basketDtoList = basketList
+                .stream()
+                .map(basket -> new BasketDto(basket.getId(),basket.getDate() ).addList())
+                .toList();
+        return new ResponseResult<>(basketDtoList,ResponseStatus.SUCCESS,"All OK");
+
+    }
 
 
 }
