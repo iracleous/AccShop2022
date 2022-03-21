@@ -17,6 +17,6 @@ public interface BasketProductRepository extends JpaRepository<BasketProduct,Int
     @Query("Select bp from BasketProduct bp where bp.basket.id = :basketId and bp.product.id= :productId")
     Optional<BasketProduct> findByBasketAndProduct(int basketId, int productId);
 
-    @Query("Select product.bp from BasketProduct bp where bp.basket.id = :basketId")
+    @Query("Select bp.product from BasketProduct bp where bp.basket.id = :basketId")
     List<Product> findProductIBasket(int basketId);
 }
