@@ -228,7 +228,6 @@ public class EshopServiceImpl implements EshopService{
     @Override
     public ResponseResult<List<BasketDto>> customerBasketProducts(int customerId) {
         Optional<Customer> customerOpt = customerRepository.findById(customerId);
-
         if (customerOpt.isEmpty()) {
 
             log.debug("Create basket method returning from method",  ResponseStatus.CUSTOMER_NOT_FOUND);
@@ -236,12 +235,38 @@ public class EshopServiceImpl implements EshopService{
                     ResponseStatus.CUSTOMER_NOT_FOUND, "The customer cannot be found");
         }
         List<Basket> basketList = basketRepository.findBasketsByCustomerId(customerId);
+
         List<BasketDto> basketDtoList = basketList
                 .stream()
                 .map(basket -> new BasketDto(basket.getId(),basket.getDate() ).addList())
                 .toList();
         return new ResponseResult<>(basketDtoList,ResponseStatus.SUCCESS,"All OK");
 
+    }
+
+    @Override
+    public ResponseResult<Boolean> deleteCustomerBasket(int customerId) {
+        return null;
+//
+//        Optional<Customer> customerOpt = customerRepository.findById(customerId);
+//        if (customerOpt.isEmpty()) {
+//
+//            log.debug("Create basket method returning from method",  ResponseStatus.CUSTOMER_NOT_FOUND);
+//            return new ResponseResult<>(false,
+//                    ResponseStatus.CUSTOMER_NOT_FOUND, "The customer cannot be found");
+//        }
+//
+//
+//        //to check
+//        //to do
+//        List<Basket> baskets =    basketRepository.findBasketsByCustomerId( customerId);
+//        baskets.forEach(basket -> basketProductRepository.deleteProductIBasket(basket.getId()));
+//        baskets.forEach( basket -> basketRepository.delete(basket));
+//
+//        customerRepository.delete(customerOpt.get());
+//
+//        return new ResponseResult<>(true,
+//                ResponseStatus.SUCCESS, "The customer was deleted");
     }
 
 

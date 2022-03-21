@@ -30,5 +30,10 @@ public interface EshopService {
     List<ProductDto> productsInBasket(int basketId);
     List<ProductDto> productsInBasket1(int basketId);
 
-    ResponseResult<List<BasketDto>> customerBasketProducts(int customer);
+    ResponseResult<List<BasketDto>> customerBasketProducts(int customerId);
+
+    ResponseResult<Boolean> deleteCustomerBasket(int customerId);
+
+
+
 }

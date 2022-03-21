@@ -19,4 +19,7 @@ public interface BasketProductRepository extends JpaRepository<BasketProduct,Int
 
     @Query("Select bp.product from BasketProduct bp where bp.basket.id = :basketId")
     List<Product> findProductIBasket(int basketId);
+
+    @Query("Delete from  BasketProduct bp where bp.basket.id = :basketId")
+    void deleteProductIBasket(int basketId);
 }

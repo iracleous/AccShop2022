@@ -54,4 +54,9 @@ public class ProductController {
         return eshopService.customerBasketProducts(customerId);
     }
 
+    @GetMapping(value="/customer/{customerId}/delete")
+    public ResponseResult<Boolean> deleteCustomerBasket(@PathVariable("customerId") int customerId){
+        return eshopService.deleteCustomerBasket(customerId);
+    }
+
 }
