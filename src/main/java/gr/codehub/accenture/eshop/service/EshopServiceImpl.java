@@ -154,11 +154,11 @@ public class EshopServiceImpl implements EshopService{
             basketRepository.save(basket);
         }
         catch (Exception e){
-            log.debug("Create basket method returning from method",  ResponseStatus.BASKET_NOT_CREATED);
+            log.debug("Create basket method returning from method for {}",  ResponseStatus.BASKET_NOT_CREATED);
             return new ResponseResult<>(-1, ResponseStatus.BASKET_NOT_CREATED, "The basket has NOT been saved");
         }
 
-        log.debug("Create basket method returning from method",  ResponseStatus.SUCCESS);
+        log.debug("Create basket method returning from method for {}",  ResponseStatus.SUCCESS);
         return new ResponseResult<>( basket.getId(),
                 ResponseStatus.SUCCESS,"The basket has been created successfully")  ;
     }
@@ -230,7 +230,7 @@ public class EshopServiceImpl implements EshopService{
         Optional<Customer> customerOpt = customerRepository.findById(customerId);
         if (customerOpt.isEmpty()) {
 
-            log.debug("Create basket method returning from method",  ResponseStatus.CUSTOMER_NOT_FOUND);
+            log.debug("Create basket method returning from method for {}",  ResponseStatus.CUSTOMER_NOT_FOUND);
             return new ResponseResult<>(null,
                     ResponseStatus.CUSTOMER_NOT_FOUND, "The customer cannot be found");
         }
