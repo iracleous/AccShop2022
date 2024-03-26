@@ -1,5 +1,6 @@
 package gr.codehub.accenture.eshop.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -10,11 +11,9 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class BasketDto {
-    @NonNull
     private int basketId;
-    @NonNull
     private LocalDateTime date;
     private List<ProductDto> products;
 

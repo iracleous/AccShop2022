@@ -238,7 +238,7 @@ public class EshopServiceImpl implements EshopService{
 
         List<BasketDto> basketDtoList = basketList
                 .stream()
-                .map(basket -> new BasketDto(basket.getId(),basket.getDate() ).addList())
+                .map(basket -> new BasketDto(basket.getId(),basket.getDate(), null ).addList())
                 .toList();
         return new ResponseResult<>(basketDtoList,ResponseStatus.SUCCESS,"All OK");
 
