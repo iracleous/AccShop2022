@@ -41,10 +41,10 @@ public class EshopServiceImpl implements EshopService{
     @Override
     public ResponseResult<List<Customer>> readCustomer() {
         List<Customer> list = customerRepository.findAll();
-        if (list.size()==0)
-            return new ResponseResult(list, ResponseStatus.CUSTOMER_NOT_FOUND, "No customers");
+        if (list.isEmpty())
+            return new ResponseResult<>(list, ResponseStatus.CUSTOMER_NOT_FOUND, "No customers");
 
-        return new ResponseResult(list, ResponseStatus.SUCCESS, "Success");
+        return new ResponseResult<>(list, ResponseStatus.SUCCESS, "Success");
     }
 
     @Override
@@ -65,13 +65,13 @@ public class EshopServiceImpl implements EshopService{
     public ResponseResult<Boolean> deleteCustomer(int customerId) {
         Optional<Customer> customerDb = customerRepository.findById(customerId);
         if (customerDb.isEmpty())
-            return new ResponseResult<Boolean>(false, ResponseStatus.CUSTOMER_NOT_FOUND,"No such customer");
+            return new ResponseResult<>(false, ResponseStatus.CUSTOMER_NOT_FOUND,"No such customer");
         try {
             customerRepository.delete(customerDb.get());
-            return new ResponseResult<Boolean>(true, ResponseStatus.SUCCESS,"The customer has been deleted");
+            return new ResponseResult<>(true, ResponseStatus.SUCCESS,"The customer has been deleted");
         }
        catch(Exception e){
-           return new ResponseResult<Boolean>(false, ResponseStatus.CUSTOMER_CANNOT_BE_DELETED,"The customer cannot be deleted");
+           return new ResponseResult<>(false, ResponseStatus.CUSTOMER_CANNOT_BE_DELETED,"The customer cannot be deleted");
        }
     }
 
@@ -138,12 +138,12 @@ public class EshopServiceImpl implements EshopService{
      */
     @Override
     public ResponseResult<Integer> createBasket(int customerId) {
-        log.debug("Create basket method entering method",customerId);
+        log.debug("Create basket method entering method for {}",customerId);
         Optional<Customer> customerOpt = customerRepository.findById(customerId);
 
         if (customerOpt.isEmpty()) {
 
-            log.debug("Create basket method returning from method",  ResponseStatus.CUSTOMER_NOT_FOUND);
+            log.debug("Create basket method returning from method for {}",  ResponseStatus.CUSTOMER_NOT_FOUND);
             return new ResponseResult<>(-1,
                     ResponseStatus.CUSTOMER_NOT_FOUND, "The customer cannot be found");
         }
